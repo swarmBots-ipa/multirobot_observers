@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from matplotlib import transforms
 import numpy as np
 import pandas as pd
-
+from cycler import cycler
 index = np.arange(1, 5, dtype=int)
 coordinates = ["x","y","\u03F4"]
 new_c = []
@@ -42,12 +42,14 @@ for i  in range(0,4):
     data.append(delta_dictionary['y'][i])
     data.append(delta_dictionary['theta'][i])
 print(data)
+custom_cycler =(cycler(color=['c','m','y']))
 df = pd.DataFrame({'Name':new_c,
                   'TEST_Name':['1']*3+['2']*3+['3']*3+['4']*3,
                   'Label':['Median']*12,
                   'Data':data})
 df = df.set_index(['TEST_Name','Name'])['Data']#.unstack()
 print(df)
+df.to_csv('experiment.csv')
 def add_line(ax, xpos, ypos):
     line = plt.Line2D([xpos, xpos], [ypos + .1, ypos],
                       transform=ax.transAxes, color='gray')
@@ -73,15 +75,19 @@ def label_group_bar_table(ax, df):
         add_line(ax, pos*scale , ypos)
         ypos -= .1
 
-ax = df.plot(marker='o', linestyle='none', xlim=(-.5,11.5), ylim=(.3,1.1))
-#Below 2 lines remove default labels
+ax = df.plot(marker='o', linestyle='none', colormap='Paired', xlim=(-.5,11.5), ylim=(.3,1.1))
+#Below 2 lines remove default labelscustom_cyclercustocustom_cyclerm_cycler
+
 ax.set_xticklabels('')
 ax.set_xlabel('')
 label_group_bar_table(ax, df)
+ax.set_prop_cycle(custom_cycler)
+ax.set_xlabel('Iterations')
+ax.set_ylabel('Error')
+ax.xaxis.set_label_coords(.5,-.3)
 # you may need these lines, if not working interactive
 plt.tight_layout()
 plt.show()
-
 '''
 labels = ['apples', 'bananas', 'coconuts', 'dates', 'elderberries', 'figs', 'grapes']
 years = [2017, 2018, 2019]

@@ -10,14 +10,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import atan2
 from itertools import groupby
+from std_msgs.msg import String
+from rclpy.executors import SingleThreadedExecutor
+from cycler import cycler
 class localization_error(Node):
 
-    def __init__(self):
+    def __init__(self,robot_id):
         super().__init__('minimal_subscriber')
         self.x_position = []
         self.y_position = []    
-        #self.z_position = [] 
-        #self.w_position = [] 
         self.theta_position = []
         self.goal_position_x = []
         self.goal_position_y = []
@@ -32,9 +33,9 @@ class localization_error(Node):
         #self.delta_dictionary["w"] = []
         self.delta_dictionary["theta"] = []
         self.data = []
-
+        self.robot_number = str(robot_id)
         #generate x_axis
-        self.index = np.arange(1, 5, dtype=int)
+        self.index = np.arange(1, 16, dtype=int)
         self.coordinates = ["x","y","\u03F4"]
         self.x_axis = []
         for x in self.index:
@@ -45,57 +46,23 @@ class localization_error(Node):
     
         self.subscription = self.create_subscription(
             PoseWithCovarianceStamped,
-            'barista_0/amcl_pose',
+            'barista_'+str(robot_id)+'/amcl_pose',
             self.barista_0_amcl_callback,
             10)
         self.subscription  
         self.subscription2 = self.create_subscription(
             PoseStamped,
-            'barista_0/goal_pose',
+            'barista_'+str(robot_id)+'/send_pose',
             self.barista_0_goal_callback,
             10)
         self.subscription2
         self.subscription3 = self.create_subscription(
-            Twist,    
-            '/barista_0/cmd_vel',
+            String,    
+            '/barista_'+str(robot_id)+'/goal_status',
             self.status_check,
             10) 
         self.subscription3
-        """         
-        self.subscription3 = self.create_subscription(
-            PoseWithCovarianceStamped,
-            'barista_1/amcl_pose',
-            self.barista_1_amcl_callback,
-            10)
-        self.subscription3  
-        self.subscription4 = self.create_subscription(
-            PoseStamped,
-            'barista_1/goal_pose',
-            self.self.barista_1_goal_callback,
-            10)from itertools import groupby
-        self.subscription4
-        self.subscription5 = self.create_subscription(
-            PoseWithCovarianceStamped,
-            'barista_2/amcl_pose',
-            self.barista_2_amcl_callback,
-            10)
-        self.subscription5  
-        self.subscription6 = self.create_subscription(
-            PoseStamped,
-            'barista_2/goal_pose',
-            self.barista_1_goal_callback,
-            10)
-        self.subscription6data
-            self.barista_3_amcl_callback,
-            10)
-        self.subscription7  
-        self.subscription8 = self.create_subscription(
-            PoseStamped,
-            'barista_1/goal_pose',
-            self.barista_3_goal_callback,
-            10)
-        self.subscription8
-        """
+
     def barista_0_amcl_callback(self, msg):          
         self.x_position.append(msg.pose.pose.position.x)
          
@@ -127,7 +94,7 @@ class localization_error(Node):
         #self.goal_position_w.append(msg.pose.orientation.w)
     
     def status_check(self, msg):
-        if msg.linear.x == 0 and msg.angular.z == 0:
+        if msg.data == "goal_reached":
             print("stopped")
             self.delta_x = round(float(self.goal_position_x[0]) - float(self.x_position[-1]) ,5)
             self.delta_y = round(float(self.goal_position_y[0]) - float(self.y_position[-1]) ,5)
@@ -147,18 +114,20 @@ class localization_error(Node):
         #self.delta_dictionary["z"].append(z)
         #self.delta_dictionary["w"].append(w)
         self.barista_0_delta_dictionary = self.delta_dictionary
-        if self.i == 4:
-            for i  in range(0,4):
+        if self.i == 15:
+            for i  in range(0,15):
                 self.data.append(self.delta_dictionary["x"][i])
                 self.data.append(self.delta_dictionary["y"][i])
                 self.data.append(self.delta_dictionary["theta"][i])
             print(self.data)
+            
             df = pd.DataFrame({'Name':self.x_axis,
-                  'TEST_Name':['1']*3+['2']*3+['3']*3+['4']*3,
-                  'Label':['Median']*12,
+                  'TEST_Name':['1']*3+['2']*3+['3']*3+['4']*3+['5']*3+['6']*3+['7']*3+['8']*3+['9']*3+['10']*3+['11']*3+['12']*3+['13']*3+['14']*3+['15']*3,
+                  'Label':['Median']*45,
                   'Data':self.data})
             df = df.set_index(['TEST_Name','Name'])['Data']#.unstack()
             print(df)
+            df.to_csv('experiment' + self.robot_number + '.csv')
             def add_line(ax, xpos, ypos):
                 line = plt.Line2D([xpos, xpos], [ypos + .1, ypos],
                                 transform=ax.transAxes, color='gray')
@@ -184,11 +153,16 @@ class localization_error(Node):
                     add_line(ax, pos*scale , ypos)
                     ypos -= .1
 
-            ax = df.plot(marker='o', linestyle='none', xlim=(-.5,11.5))
+            print(df)
+            ax = df.plot(marker='o', linestyle='none',)#, xlim=(-.5,11.5)) # ! add different colors
             #Below 2 lines remove default labels
             ax.set_xticklabels('')
             ax.set_xlabel('')
-            label_group_bar_table(ax, df)
+            label_group_bar_table(ax, df) 
+            ax.set_title('Error propagation graph of robot ' + self.robot_number)
+            ax.set_label('Iterations')
+            ax.xaxis.set_label_coords(.5,-.3)
+            ax.set_ylabel('Error')          
             # you may need these lines, if not working interactive
             plt.tight_layout()
             plt.show()
@@ -197,22 +171,28 @@ class localization_error(Node):
 
 
 
-            
-            
-
-             
-
-
 
 
 def main(args=None):
     rclpy.init(args=args)
+    try:
+        error_subscriber_0 = localization_error(robot_id=0)
+        error_subscriber_1 = localization_error(robot_id=1)
+        error_subscriber_2 = localization_error(robot_id=2)
+        error_subscriber_3 = localization_error(robot_id=3)
+        executor = SingleThreadedExecutor()
 
-    minimal_subscriber = localization_error()
 
-    rclpy.spin(minimal_subscriber)
-    minimal_subscriber.destroy_node()
-    rclpy.shutdown()
+        executor.add_node(error_subscriber_0)
+        executor.add_node(error_subscriber_1)
+        executor.add_node(error_subscriber_2)
+        executor.add_node(error_subscriber_3)
+        try:
+            executor.spin()
+        finally:
+            executor.shutdown()
+    except KeyboardInterrupt:
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':
