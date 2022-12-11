@@ -13,6 +13,13 @@ from itertools import groupby
 from std_msgs.msg import String
 from rclpy.executors import SingleThreadedExecutor
 from cycler import cycler
+from matplotlib import cm
+
+from matplotlib.lines import Line2D
+import pandas as pd
+import matplotlib.pyplot as plt
+from itertools import cycle, groupby, islice
+import numpy as np 
 class localization_error(Node):
 
     def __init__(self,robot_id):
@@ -120,14 +127,24 @@ class localization_error(Node):
                 self.data.append(self.delta_dictionary["y"][i])
                 self.data.append(self.delta_dictionary["theta"][i])
             print(self.data)
-            
+            list = []
+            final_list = []
+            for i in range(1,16):
+                list.append([i]*3)
+            for sub in list:
+                for val in sub:
+                    final_list.append(val)
+            #print(final_list)
             df = pd.DataFrame({'Name':self.x_axis,
-                  'TEST_Name':['1']*3+['2']*3+['3']*3+['4']*3+['5']*3+['6']*3+['7']*3+['8']*3+['9']*3+['10']*3+['11']*3+['12']*3+['13']*3+['14']*3+['15']*3,
+                  'TEST_Name':final_list,
                   'Label':['Median']*45,
                   'Data':self.data})
             df = df.set_index(['TEST_Name','Name'])['Data']#.unstack()
-            print(df)
+            #print(df)
             df.to_csv('experiment' + self.robot_number + '.csv')
+
+
+            # comment from this block if only csv is required
             def add_line(ax, xpos, ypos):
                 line = plt.Line2D([xpos, xpos], [ypos + .1, ypos],
                                 transform=ax.transAxes, color='gray')
@@ -153,17 +170,47 @@ class localization_error(Node):
                     add_line(ax, pos*scale , ypos)
                     ypos -= .1
 
-            print(df)
-            ax = df.plot(marker='o', linestyle='none',)#, xlim=(-.5,11.5)) # ! add different colors
+            #print(df)
+            #ax = df.plot(marker='o', linestyle='none',)#, xlim=(-.5,11.5))
+            color_list =[]
+            my_colors = islice(cycle(['b', 'r', 'g']), None, 45)
+            for item in my_colors:
+                color_list.append(item)    
+
+            fig, ax = plt.subplots(1)
+
+            #x-axis
+            x_list = np.arange(1, 46).tolist()
+            #create axis
+            ax.scatter(x_list, df.values, c=color_list)
             #Below 2 lines remove default labels
+            plt.yticks(np.arange(df.values.min(), df.values.max(), 0.5))
+            plt.xlim(0.5,45.5)
             ax.set_xticklabels('')
             ax.set_xlabel('')
-            label_group_bar_table(ax, df) 
-            ax.set_title('Error propagation graph of robot ' + self.robot_number)
-            ax.set_label('Iterations')
+
+            #add x-axis values
+            label_group_bar_table(ax, df)
+
+            #add legend
+            legend_elements = [Line2D([0], [0], marker='o', color='b', label='x',
+                                    markerfacecolor='b', markersize=8),
+                            Line2D([0], [0], marker='o', color='r', label='y',
+                                    markerfacecolor='r', markersize=8),
+                            Line2D([0], [0], marker='o', color='g', label='\u03F4',
+                                    markerfacecolor='g', markersize=8)]
+
+            ax.legend(handles=legend_elements, loc='upper left')
+
+            #add grids
+            ax.minorticks_on()
+            ax.grid(which='major', linestyle='-', linewidth='0.5')
+            ax.grid(which='minor',linestyle='-', linewidth='0.5')
+
+            #add labels
+            ax.set_xlabel('Iterations')
+            ax.set_ylabel('Error in cm')
             ax.xaxis.set_label_coords(.5,-.3)
-            ax.set_ylabel('Error')          
-            # you may need these lines, if not working interactive
             plt.tight_layout()
             plt.show()
         self.i += 1
