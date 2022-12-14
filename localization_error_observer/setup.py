@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'swarm_observers'
+package_name = 'localization_error_observer'
 
 setup(
     name=package_name,
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'localization_error_observer = swarm_observers.localization_error_observer:main',
+            'localization_error_observer = localization_error_observer.localization_error_observer:main',
         ],
     },
 )

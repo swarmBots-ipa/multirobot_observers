@@ -4,7 +4,7 @@ works as a support package to calculate localization error of swarmbots.
 
 ## Run localization error observer
  
-`ros2 run swarm_observers localization_error_observer`
+`ros2 run localization_error_observer localization_error_observer`
 
 - currently requires 15 samples of goal poses to work. 
 - creates graph with iterations in x-axis and error values in y-axis

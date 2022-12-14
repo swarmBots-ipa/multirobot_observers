@@ -2,11 +2,9 @@
 # Usage 'python3 plot_graph.py'
 # This programs required csv file save inside doc folder it can be generated from running localization_error_observer ros node
 
-import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import transforms
-import numpy as np
-import pandas as pd
+
 from cycler import cycler
 from matplotlib import cm
 
