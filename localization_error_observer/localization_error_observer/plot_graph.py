@@ -1,6 +1,6 @@
 # This Program generates plot, from the localization experiment
 # Usage 'python3 plot_graph.py n'
-# This programs required csv files which will be saved in the workspace when localization error observer is started, this program also saves the csv in the doc folder
+# This programs required csv files which will be saved in the workspace when localization error observer is started, this program also saves the csv in the data folder
 
 from matplotlib import pyplot as plt
 from matplotlib import transforms
@@ -28,9 +28,9 @@ for i in range(0,int(sys.argv[1])):
     n - number of robots used in the case of swarm bots n = 4
     """        """"""
     print(i)
-    # import dataframe from the csv and save in doc
+    # import dataframe from the csv and save in data
     df = pd.read_csv('../../../experiment' + str(i) +'.csv') # adjust this parameter to point to csv generated
-    df.to_csv('../doc/experiment'+ str(i) + '.csv')
+    df.to_csv('../data/experiment'+ str(i) + '.csv')
     # create index
     df = df.set_index(['TEST_Name','Name'])['Data']
     list = []
@@ -122,4 +122,4 @@ for i in range(0,int(sys.argv[1])):
 
     plt.tight_layout()
     plt.show()
-    #plt.savefig('../doc/epg_new_' + str(i) + '.png')
+    #plt.savefig('../data/epg_new_' + str(i) + '.png')
