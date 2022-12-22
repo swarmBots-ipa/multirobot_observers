@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 #Current path witten using utils.py
-current_path = "/home/kut-jr/swarmbots/src/formation_error_observer/data" 
-
+current_path = "/home/janavi/swarmbot2/src/formation_error_observer/data" 
 import rclpy
 from geometry_msgs.msg import PoseStamped
 from math import atan2
@@ -15,18 +14,16 @@ goal_data_1={"barista_1_goal":list()}
 goal_data_2={"barista_2_goal":list()}
 goal_data_3={"barista_3_goal":list()}
 
-
-
 class GoalSubscriber(Node):
    
     def __init__(self):
         super().__init__("Goal_subscriber")
-        self.subscription = self.create_subscription(PoseStamped,'/barista_0/goal_pose',self.callback_0,10)
-        self.subscription = self.create_subscription(PoseStamped,'/barista_1/goal_pose',self.callback_1,10)
-        self.subscription = self.create_subscription(PoseStamped,'/barista_2/goal_pose',self.callback_2,10)
-        self.subscription = self.create_subscription(PoseStamped,'/barista_3/goal_pose',self.callback_3,10)
+        self.subscription = self.create_subscription(PoseStamped,'/barista_0/send_pose',self.callback_0,10)
+        self.subscription = self.create_subscription(PoseStamped,'/barista_1/send_pose',self.callback_1,10)
+        self.subscription = self.create_subscription(PoseStamped,'/barista_2/send_pose',self.callback_2,10)
+        self.subscription = self.create_subscription(PoseStamped,'/barista_3/send_pose',self.callback_3,10)
 
-        self.get_logger().info("barista__Goal is ready")
+        self.get_logger().info("Barista_Goal IS READY")
 
 
 # fetching Coordinates 
@@ -65,7 +62,7 @@ class GoalSubscriber(Node):
 
 # Creating Json files
     def final_data():
-        with open(current_path + '/Goals.json', "w") as output:
+        with open(current_path + '/json/Goals.json', "w") as output:
             final_goal_data=[goal_data_0,goal_data_1,goal_data_2,goal_data_3]
             json.dump(final_goal_data, output, sort_keys=True)
           

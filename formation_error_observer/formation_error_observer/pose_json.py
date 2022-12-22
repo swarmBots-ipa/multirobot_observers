@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 #Current path witten using utils.py
-current_path = "/home/kut-jr/swarmbots/src/formation_error_observer/data" 
+current_path = "/home/janavi/swarmbot2/src/formation_error_observer/data" 
 import rclpy
 from geometry_msgs.msg import Point, Twist, PoseWithCovarianceStamped
 from nav2_msgs.msg import BehaviorTreeLog
+from std_msgs.msg import String
 from math import atan2
 from tf_transformations import euler_from_quaternion
 from rclpy.node import Node
@@ -27,15 +28,15 @@ class PoseSubscriber(Node):
     #Subsriber function 
     def __init__(self):
         super().__init__("Pose_subscriber")
-        self.subscription = self.create_subscription(PoseWithCovarianceStamped,'/barista_0/amcl_pose',self.callback_0,10)
-        self.subscription = self.create_subscription(PoseWithCovarianceStamped,'/barista_1/amcl_pose',self.callback_1,10)
-        self.subscription = self.create_subscription(PoseWithCovarianceStamped,'/barista_2/amcl_pose',self.callback_2,10)
-        self.subscription = self.create_subscription(PoseWithCovarianceStamped,'/barista_3/amcl_pose',self.callback_3,10)
-        self.subscription = self.create_subscription(BehaviorTreeLog,'/barista_0/behavior_tree_log',self.goal_callback_0,10)
-        self.subscription = self.create_subscription(BehaviorTreeLog,'/barista_1/behavior_tree_log',self.goal_callback_1,10)
-        self.subscription = self.create_subscription(BehaviorTreeLog,'/barista_2/behavior_tree_log',self.goal_callback_2,10)
-        self.subscription = self.create_subscription(BehaviorTreeLog,'/barista_3/behavior_tree_log',self.goal_callback_3,10)
-        self.get_logger().info("barista__Pose is ready")
+        self.subscription_P0 = self.create_subscription(PoseWithCovarianceStamped,'/barista_0/amcl_pose',self.callback_0,10)
+        self.subscription_P1 = self.create_subscription(PoseWithCovarianceStamped,'/barista_1/amcl_pose',self.callback_1,10)
+        self.subscription_P2 = self.create_subscription(PoseWithCovarianceStamped,'/barista_2/amcl_pose',self.callback_2,10)
+        self.subscription_P3 = self.create_subscription(PoseWithCovarianceStamped,'/barista_3/amcl_pose',self.callback_3,10)
+        self.subscription_G0 = self.create_subscription(String,'/barista_0/goal_status',self.goal_callback_0,10)
+        self.subscription_G1 = self.create_subscription(String,'/barista_1/goal_status',self.goal_callback_1,10)
+        self.subscription_G2 = self.create_subscription(String,'/barista_2/goal_status',self.goal_callback_2,10)
+        self.subscription_G3 = self.create_subscription(String,'/barista_3/goal_status',self.goal_callback_3,10)
+        self.get_logger().info("Barista_Pose IS READY")
 
 # fetching Coordinates    
     def callback_0(self, pose:PoseWithCovarianceStamped):
@@ -89,33 +90,27 @@ class PoseSubscriber(Node):
 
 #fetching last coordinates after successfully reaching goal
 
-    def goal_callback_0(self, goal:BehaviorTreeLog):
-        final_goal= goal.event_log
-        msg = ("current_status='IDLE'")
-        if msg in str(final_goal):
+    def goal_callback_0(self, goal:String):
+        msg= goal.data
+        if msg==('goal_reached'):
             self.get_logger().info("barista_0 reached goal")
             pose_data_0["barista_0_pose"].append({"x":_x0, "y":_y0, "theta":_theta0})
     
-    def goal_callback_1(self, goal:BehaviorTreeLog):
-        final_goal= goal.event_log
-        #self.get_logger().info(str(final_goal))
-        msg = ("current_status='IDLE'")
-        if msg in str(final_goal):
+    def goal_callback_1(self, goal:String):
+        msg= goal.data
+        if msg==('goal_reached'):
             self.get_logger().info("barista_1 reached goal")
             pose_data_1["barista_1_pose"].append({"x":_x1, "y":_y1, "theta":_theta1})
 
-    def goal_callback_2(self, goal:BehaviorTreeLog):
-        final_goal= goal.event_log
-        #self.get_logger().info(str(final_goal))
-        msg = ("current_status='IDLE'")
-        if msg in str(final_goal):
+    def goal_callback_2(self, goal:String):
+        msg= goal.data
+        if msg==('goal_reached'):
             self.get_logger().info("barista_2 reached goal")
             pose_data_2["barista_2_pose"].append({"x":_x2, "y":_y2, "theta":_theta2})
 
-    def goal_callback_3(self, goal:BehaviorTreeLog):
-        final_goal= goal.event_log
-        msg = ("current_status='IDLE'")
-        if msg in str(final_goal):
+    def goal_callback_3(self, goal:String):
+        msg= goal.data
+        if msg==('goal_reached'):
             self.get_logger().info("barista_3 reached goal")
             pose_data_3["barista_3_pose"].append({"x":_x3, "y":_y3, "theta":_theta3})
 
@@ -123,12 +118,12 @@ class PoseSubscriber(Node):
 #Writing json and csv files
     def final_data():
         final_pose_data=[pose_data_0,pose_data_1,pose_data_2,pose_data_3]
-        with open(current_path + '/Poses.json', "w") as output:
+        with open(current_path + '/json/Poses.json', "w") as output:
             json.dump(final_pose_data, output, sort_keys=True) 
         bot_coordinates=[]
         bot_coordinates.append([bot_0_coord]+[bot_1_coord]+[bot_2_coord]+[bot_3_coord])
         for i in range(4):
-            with open(current_path + '/Robot'+ str(i) + '.csv', 'w', newline='')as f:
+            with open(current_path + '/csv/Robot'+ str(i) + '.csv', 'w', newline='')as f:
                 field_names= ['X','Y','Theta','Timestamp']
                 writer = csv.DictWriter(f, fieldnames=field_names)
                 writer.writeheader()
