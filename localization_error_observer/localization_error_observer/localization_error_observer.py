@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import String
+from std_msgs.msg import Bool
 from rclpy.executors import SingleThreadedExecutor
 from rcl_interfaces.msg import ParameterDescriptor, ParameterValue
 import numpy as np
@@ -66,7 +66,7 @@ class LocalizationError(Node):
             10)
         self.subscription2
         self.subscription3 = self.create_subscription(
-            String,
+            Bool,
             '/barista_'+str(robot_id)+'/goal_status',
             self.status_check,
             10)
@@ -110,7 +110,7 @@ class LocalizationError(Node):
         Args:
             msg (String): goal status message
         """
-        if msg.data == "goal_reached":
+        if msg.data == True:
             print("stopped")
 
             self.delta_x = round(
