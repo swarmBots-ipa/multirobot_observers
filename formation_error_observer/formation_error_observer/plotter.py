@@ -1,25 +1,29 @@
 #!/usr/bin/env python3
 #Current path witten using utils.py
-current_path = "/home/kut-jr/swarmbots/src/formation_error_observer/data" 
 
 import json
 import matplotlib.pyplot as mlt
 import numpy as nmpi
 import geopandas as gpd
 from shapely.geometry import Polygon, MultiPolygon
+
 import shapely.ops as so
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import os
 
+
+
 #Fetching and loading json file
-pose_file = open(current_path + '/Poses.json', 'r')
-goal_file = open(current_path + '/Goals.json', 'r')
+
+pose_file = open('../data/json/Poses.json', 'r')
+goal_file = open('../data/json/Goals.json', 'r')
 pose_data = pose_file.read()
 goal_data = goal_file.read()
 goal = json.loads(goal_data)
 pose = json.loads(pose_data)
-
+print(goal)
+print(pose)
 #storing goal coordinates in arrays
 
 #Goal Coordinates
@@ -27,8 +31,9 @@ goal_x_arr = []
 goal_y_arr = []
 goal_theta_arr = []
 
+
+Main = goal[0]
 for i in range(4):
-    Main = goal[i]
     goal_array = Main["barista_" + str(i) + "_goal"]
     length = len(goal_array)
     for k in range(length):
@@ -43,8 +48,9 @@ for i in range(4):
 pose_x_array = []
 pose_y_array = []
 pose_theta_array = []
-for i in range(4):
-    Main = pose[i]
+
+Main = pose[0]
+for i in range(4): 
     pose_array = Main["barista_" + str(i) + "_pose"]
     length = len(pose_array)
     for k in range(length):
@@ -62,6 +68,7 @@ pose_y_points = nmpi.array(pose_y_array)
 mlt.figure("Goal vs Actual")
 mlt.scatter(goal_x_points, goal_y_points, color='green', label='Goal')
 mlt.scatter(pose_x_points, pose_y_points, color='red', label='Actual')
+mlt.savefig('../data/graphs/dotgraph.png')
 mlt.legend()
 #Creating polygon set
 
@@ -92,13 +99,14 @@ for poly in goal_polygon.geoms:
 for poly in pose_polygon.geoms:
     xe, ye = poly.exterior.xy
     ax.plot(xe, ye, color="red")
-legend = [Line2D([0], [0], color='b', label='Goal'),
-          Line2D([0], [0], color='r', label='Actual')]
+
+legend = [Line2D([0], [0], color='b', label='Goal'),Line2D([0], [0], color='r', label='Actual')]
 
 ax.legend(handles=legend)
 
 ax.minorticks_on()
 ax.grid(which='major', linestyle='-', linewidth='0.5')
 ax.grid(which='minor',linestyle='-', linewidth='0.5')
+plt.savefig('../data/graphs/Polygraph.png')
 
 mlt.show()
