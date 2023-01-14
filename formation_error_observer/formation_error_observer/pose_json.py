@@ -26,13 +26,13 @@ class PoseSubscriber(Node):
    
     #Subscriber function 
     
-    def __init__(self,arg,robot_no):
+    def __init__(self,arg,robot_id):
     
         # for i in range(no_of_bots):
         super().__init__("Pose_subscriber")
-        self.subscription = self.create_subscription(PoseWithCovarianceStamped,'/barista_'+str(robot_no)+'/amcl_pose',self.callback,10)    
-        self.subscription2 = self.create_subscription(String,'/barista_'+str(robot_no)+'/goal_status',self.goal_callback,10)
-        self.robot_id = robot_no
+        self.subscription = self.create_subscription(PoseWithCovarianceStamped,'/barista_'+str(robot_id)+'/amcl_pose',self.callback,10)    
+        self.subscription2 = self.create_subscription(String,'/barista_'+str(robot_id)+'/goal_status',self.goal_callback,10)
+        self.robot_id = robot_id
         self.i = 0
         self.iteration = int(arg)
         self.get_logger().info("Barista_Pose IS READY")

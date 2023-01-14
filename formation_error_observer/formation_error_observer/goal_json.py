@@ -16,10 +16,10 @@ bot_coord = [[[],[],[],[]],[[],[],[],[]],[[],[],[],[]],[[],[],[],[]]]
 
 class GoalSubscriber(Node):
    
-    def __init__(self,robot_no):
+    def __init__(self,robot_id):
         super().__init__("Goal_subscriber")
-        self.subscription = self.create_subscription(PoseStamped,'/barista_'+str(robot_no)+'/send_pose',self.callback,10)
-        self.robot_id = robot_no
+        self.subscription = self.create_subscription(PoseStamped,'/barista_'+str(robot_id)+'/send_pose',self.callback,10)
+        self.robot_id = robot_id
         self.get_logger().info("Barista_Goal IS READY")
 
 
