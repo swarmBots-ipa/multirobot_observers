@@ -39,7 +39,7 @@ def main(args=None):
         mil_arr =  MileageObserver.final_data()
         print(path_arr)
         print(mil_arr)
-        MileageObserverPlotter.mil_disp_graph(mil_arr,path_arr)
+        MileageObserverPlotter.mil_path_graph(mil_arr,path_arr)
         executor.shutdown()
 
 

@@ -7,7 +7,7 @@ import numpy as np
 
 class MileageObserverPlotter:
     
-    def mil_disp_graph(mil_arr,path_arr):
+    def mil_path_graph(mil_arr,path_arr):
         for i in range(len(mil_arr)):
             def trunc(values, decs =0):
                 return np.trunc(values*10**decs)/(10**decs)
