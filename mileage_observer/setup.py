@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'mileage_observer = mileage_observer.mileage_observer:main'
+            'mileage_observer = mileage_observer.mileage_observer:main',
+            'main = mileage_observer.main:main'
         ],
     },
 )
