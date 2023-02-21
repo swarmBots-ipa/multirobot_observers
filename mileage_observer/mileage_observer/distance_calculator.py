@@ -12,7 +12,7 @@ import sys
 import os
       
 subscriber = None
-path_arr =[[],[],[],[]]
+actual_path_length =[[],[],[],[]]
 
 class PathDistance(Node):
       
@@ -53,35 +53,12 @@ class PathDistance(Node):
                         prev_y = y
                         
                     #self.destroy_subscription(subscriber)
-                    if ((self.i-1)==len(path_arr[self.robot_id])):
-                        path_arr[self.robot_id].append(total_distance)
+                    if ((self.i-1)==len(actual_path_length[self.robot_id])):
+                        actual_path_length[self.robot_id].append(total_distance)
                         print("Iteration : " + str(self.i) + " Total length of path for barista_"+str(self.robot_id)+" = "+str(total_distance)+" meters")
         else:
             print("max iterations reached press CTRL + C")
 
     def final_data():
-        finalData = path_arr
+        finalData = actual_path_length
         return finalData             
-def main(args=None):
-
-    rclpy.init(args=args)
-    try:
-        node_0= PathDistance(sys.argv[1],robot_id=0)
-        node_1= PathDistance(sys.argv[1],robot_id=1)
-        node_2= PathDistance(sys.argv[1],robot_id=2)
-        node_3= PathDistance(sys.argv[1],robot_id=3)
-        executor = SingleThreadedExecutor()
-
-        executor.add_node(node_0)
-        executor.add_node(node_1)
-        executor.add_node(node_2)
-        executor.add_node(node_3)
-        executor.spin()
-        
-
-    except KeyboardInterrupt:
-        print(path_arr)
-        rclpy.shutdown()
-
-if __name__ == '__main__':
-    main()

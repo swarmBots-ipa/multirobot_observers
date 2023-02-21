@@ -3,41 +3,46 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 class MileageObserverPlotter:
     
-    def mil_path_graph(mil_arr,path_arr):
-        for i in range(len(mil_arr)):
+    def mileage_path_graph(path_travelled,actual_path_length):
+        for i in range(len(path_travelled)):
             def trunc(values, decs =0):
                 return np.trunc(values*10**decs)/(10**decs)
-            mil_arr = np.array(mil_arr)
-            mil_arr =trunc(mil_arr,decs=2)
-            path_arr = np.array(path_arr)
-            path_arr = trunc(path_arr,decs=2)
+            path_travelled = np.array(path_travelled)
+            path_travelled =trunc(path_travelled,decs=2)
+            actual_path_length = np.array(actual_path_length)
+            actual_path_length = trunc(actual_path_length,decs=2)
             iteration = []
             std =[]
            
-            for j in range(len(path_arr[i])):
-                iteration.append('Iteration'+str(j+1))
-                std.append(0.2)
+            for j in range(len(actual_path_length[i])):
+                iteration.append(str(j+1))
+                std.append(0.1)
                 
-            mileage, mileage_std = mil_arr[i], std
-            path_dist, path_dist_std = path_arr[i], std
+            path_travelled_data, mileage_std = path_travelled[i], std
+            actual_path_length_data, path_dist_std = actual_path_length[i], std
 
-            ind = np.arange(len(mileage))  # the x locations for the groups
-            width = 0.35  # the width of the bars
-            
-            fig, ax = plt.subplots()
-            rects1 = ax.bar(ind - width/2, mileage, width, yerr=mileage_std,label='Mileage')
-            rects2 = ax.bar(ind + width/2, path_dist, width, yerr=path_dist_std,label='Path distance')
+            ind = np.arange(len(path_travelled_data))  # the x locations for the groups
+            width = 0.30  # the width of the bars
+            matplotlib.rc('xtick', labelsize =13)
+            matplotlib.rc('ytick', labelsize =13)
+            matplotlib.rc('axes', labelsize =13)
+            matplotlib.rc('figure', titlesize =20)
+            fig, ax = plt.subplots(figsize = (12,10))
+            rects1 = ax.bar(ind - width/2, path_travelled_data, width, yerr=mileage_std,label='Path Travelled ')
+            rects2 = ax.bar(ind + width/2, actual_path_length_data, width, yerr=path_dist_std,label='Actual Path Length')
 
             # Add some text for labels, title and custom x-axis tick labels, etc.
-            ax.set_ylabel('Distance')
-            ax.set_title('Mileage vs Path distance - Barista : ' + str(i))
+            ax.set_ylabel('Distance in meters')
+            ax.set_xlabel('Iteration count')
+            ax.set_title('Path Travelled vs Actual Path Length - Barista : ' + str(i))
             ax.set_xticks(ind)
-            
             
 
             ax.set_xticklabels(iteration)
+            #plt.xticks(rotation = 45,ha = 'right')
             ax.legend()
             
 
@@ -60,5 +65,6 @@ class MileageObserverPlotter:
             fig.tight_layout()
             plt.savefig('../data/graphs/barista_'+str(i)+'.png')
         
-        plt.show()    
-   
+        plt.show()   
+    
+    

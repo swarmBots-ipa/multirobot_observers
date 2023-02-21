@@ -35,11 +35,11 @@ def main(args=None):
         
     except KeyboardInterrupt:
         #For writing data into json and csv files
-        path_arr = PathDistance.final_data()
-        mil_arr =  MileageObserver.final_data()
-        print(path_arr)
-        print(mil_arr)
-        MileageObserverPlotter.mil_path_graph(mil_arr,path_arr)
+        actual_path_length = PathDistance.final_data()
+        path_travelled =  MileageObserver.final_data()
+        print(actual_path_length)
+        print(path_travelled)
+        MileageObserverPlotter.mileage_path_graph(path_travelled,actual_path_length)
         executor.shutdown()
 
 
