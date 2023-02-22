@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
 
-import rclpy
 from geometry_msgs.msg import PoseStamped
 from math import atan2
 from tf_transformations import euler_from_quaternion
 from rclpy.node import Node
 import json
-from rclpy.executors import SingleThreadedExecutor
-import sys
+
 
 #Setting Arrays and dict for data storage (data = goal final coordinates)
 goal_data={"barista_0_goal":list(), "barista_1_goal":list(), "barista_2_goal":list(), "barista_3_goal":list()}
