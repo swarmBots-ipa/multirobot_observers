@@ -2,6 +2,9 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
+import csv
+import os
 
 
 class MileageObserverPlotter:
@@ -63,8 +66,45 @@ class MileageObserverPlotter:
             autolabel(rects2, "right")
 
             fig.tight_layout()
-            plt.savefig('../data/graphs/barista_'+str(i)+'.png')
+            plt.savefig(graph_path+str(i)+'.png')
         
         plt.show()   
-    
-    
+
+
+filename = os.path.basename(__file__)
+search_dir = '/home/'
+for root, dirs, files in os.walk(search_dir):
+    if filename in files:
+        file_location = os.path.join(root, filename)
+        break
+path = file_location.replace('mileage_observer/'+filename,'data')
+csv_path = (path + "/csv/Robot")
+graph_path = path+'/graphs/Barista_'
+csv_folder= path+"/csv"
+no_of_bots = 0
+file_list = os.listdir(csv_folder)
+for file_name in file_list:
+        no_of_bots+=1
+path_travelled =[]
+actual_path_length =[]
+
+for i in range(no_of_bots):
+    path_travelled.append([])
+    actual_path_length.append([])
+
+
+for i in range(no_of_bots):
+
+    with open(csv_path+str(i)+'.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if row.__contains__('Path Travelled'): 
+             continue
+            else :        
+                path_travelled[i].append(float(row[2]))
+                actual_path_length[i].append(float(row[1]))
+
+
+MileageObserverPlotter.mileage_path_graph(path_travelled,actual_path_length)
+
+                

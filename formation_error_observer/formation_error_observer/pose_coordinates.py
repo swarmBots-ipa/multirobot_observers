@@ -2,21 +2,58 @@
 
 
 from geometry_msgs.msg import PoseWithCovarianceStamped
-from std_msgs.msg import String
+from std_msgs.msg import Bool
 from math import atan2
 from tf_transformations import euler_from_quaternion
 from rclpy.node import Node
 import json
 import csv
 from formation_error_observer.goal_coordinates import GoalSubscriber
-
+import os
+import sys
 
 #Setting Arrays and dict for data storage (data = pose final coordinates; BotCoord = all coordinates at an instance)
-pose_data={"barista_0_pose":list(), "barista_1_pose":list(), "barista_2_pose":list(), "barista_3_pose":list()}
-bot_coord = [[[],[],[],[]],[[],[],[],[]],[[],[],[],[]],[[],[],[],[]]]
+#global variables
+no_of_bots= int(str((sys.argv[2])))
+pose_data ={}
+
+for i in range(no_of_bots):
+    pose_data["barista_"+str(i)+"_pose"] = list()
+bot_coord =[]
+for i in range(no_of_bots):
+    bot_coord.append([])
+    for j in range(4):
+        bot_coord[i].append([])
+
+counter = 0
+
+#creating paths
+filename = os.path.basename(__file__)
+search_dir = '/home/'
+for root, dirs, files in os.walk(search_dir):
+    if filename in files:
+        file_location = os.path.join(root, filename)
+        break
+path = file_location.replace('formation_error_observer/'+filename,'data')
 
 
 
+json_folder = path+"/json"
+csv_folder= path+"/csv"
+graph_folder = path+"/graphs"
+json_path = (path + "/json/Poses.json")
+csv_path = (path + "/csv/Robot")
+
+
+def clear_old_data(folder_path):
+    file_list = os.listdir(folder_path)
+    for file_name in file_list:
+        file_path = os.path.join(folder_path, file_name)
+        os.remove(file_path)
+
+clear_old_data(json_folder)
+clear_old_data(csv_folder)
+clear_old_data(graph_folder)
 
 class PoseSubscriber(Node):
    
@@ -25,13 +62,14 @@ class PoseSubscriber(Node):
     def __init__(self,arg,robot_id):
     
         # for i in range(no_of_bots):
-        super().__init__("Pose_subscriber")
+        super().__init__("Pose_subscriber_" + str(robot_id))
         self.subscription = self.create_subscription(PoseWithCovarianceStamped,'/barista_'+str(robot_id)+'/amcl_pose',self.callback,10)    
-        self.subscription2 = self.create_subscription(String,'/barista_'+str(robot_id)+'/goal_status',self.goal_callback,10)
+        self.subscription2 = self.create_subscription(Bool,'/barista_'+str(robot_id)+'/goal_status',self.goal_callback,10)
         self.robot_id = robot_id
         self.i = 0
+        
         self.iteration = int(arg)
-        self.get_logger().info("Barista_Pose IS READY")
+        self.get_logger().info("Barista_"+str(robot_id)+" POSE SUBSCRIBER IS READY")
 
 # fetching Coordinates    
     def callback(self, pose:PoseWithCovarianceStamped):
@@ -40,39 +78,51 @@ class PoseSubscriber(Node):
         self._y=pose.pose.pose.position.y
         self.rot_q = pose.pose.pose.orientation
         (roll, pitch, self._theta) = euler_from_quaternion([self.rot_q.x, self.rot_q.y, self.rot_q.z, self.rot_q.w])  
-        self.get_logger().info("(" + str(self._x) + " X " + str(self._y) + ")" + str(self._theta) + "barista_"+str(self.robot_id))
+        #self.get_logger().info("(X = " + str(self._x) + ",  Y= " + str(self._y) + ", Theta = " + str(self._theta) + ") barista_"+str(self.robot_id))
         i=self.robot_id
         bot_coord[i][0].append(self._x);bot_coord[i][1].append(self._y);bot_coord[i][2].append(self._theta);bot_coord[i][3].append(self.time)
-        
+        self.csv_data()
     
 #fetching last coordinates after successfully reaching goal
 
-    def goal_callback(self,goal:String):
-        msg= goal.data
-        if msg==('goal_reached'):
-            self.get_logger().info("barista_"+str(self.robot_id)+"reached goal")
+    def goal_callback(self,goal:Bool):
+        print('=================================================')
+        if (goal.data==True):
+            self.get_logger().info("barista_"+str(self.robot_id)+": reached goal.")
+            self.get_logger().info("barista_"+str(self.robot_id)+": Pose Coordinates: (x = " + str(self._x) + ", y = " + str(self._y) + ", Theta = " + str(self._theta)+")")
             pose_data["barista_"+str(self.robot_id)+"_pose"].append({"x":self._x, "y":self._y, "theta":self._theta})
-        self.iteration_counter()
+            self.json_data()
+            self.iteration_counter()
+            
+            
 
     def iteration_counter(self):
-        
         self.i += 1
-        self.get_logger().info("Iteration " + str(self.i) + " completed for bot_" + str(self.robot_id))
+        self.get_logger().info( "barista_" + str(self.robot_id)+ ": Iteration No.(" + str(self.i) + ") Completed.")
+        global counter
+        counter+=1
         if self.i==self.iteration:
-                PoseSubscriber.final_data()
-                GoalSubscriber.final_data()
-                self.get_logger().info("This is Final Iteration for bot_" + str(self.robot_id))
-         
+            if counter == no_of_bots:
+                from formation_error_observer.main import nodes_shutdown
+                nodes_shutdown(self.i)
+        else:
+            if counter == no_of_bots:
+                from formation_error_observer.main import iteration_indicator
+                iteration_indicator(self.i)
+                counter = 0
+        
 
 #Writing json and csv files
-    def final_data():
+    def json_data(self):
         final_pose_data=[pose_data]
-        with open('../data/json/Poses.json', "w") as output:
+        with open(json_path, "w") as output:
             json.dump(final_pose_data, output, sort_keys=True) 
+
+    def csv_data(self):
         bot_coordinates=[]
         bot_coordinates.append(bot_coord)
-        for i in range(4):
-            with open('../data/csv/Robot'+ str(i) + '.csv', 'w', newline='')as f:
+        for i in range(no_of_bots):
+            with open(csv_path + str(i) + '.csv', 'w', newline='')as f:
                 field_names= ['X','Y','Theta','Timestamp']
                 writer = csv.DictWriter(f, fieldnames=field_names)
                 writer.writeheader()

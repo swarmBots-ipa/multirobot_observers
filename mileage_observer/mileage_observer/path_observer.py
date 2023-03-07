@@ -12,7 +12,18 @@ import sys
 import os
       
 subscriber = None
-actual_path_length =[[],[],[],[]]
+actual_path_length = []
+no_of_bots= int(str((sys.argv[2])))
+for n in range(no_of_bots):
+    actual_path_length.append([])
+filename = os.path.basename(__file__)
+search_dir = '/home/'
+for root, dirs, files in os.walk(search_dir):
+    if filename in files:
+        file_location = os.path.join(root, filename)
+        break
+path = file_location.replace('mileage_observer/'+filename,'data')
+csv_path = (path + "/csv/Robot")
 
 class PathDistance(Node):
       
@@ -21,11 +32,11 @@ class PathDistance(Node):
         global subscriber  
         self.i=1
         self.iterations=int(arg)
-        super().__init__('calculate_path_distance')
+        super().__init__('calculate_path_distance_'+str(robot_id))
         self.subscriber = self.create_subscription(Path,'/barista_'+str(robot_id)+'/plan', self.printPath,10)
         self.subscription3 = self.create_subscription(Bool,'/barista_'+str(robot_id)+'/goal_status',self.status_check,10)
         self.robot_id=robot_id
-        print ("Listening to /barista_"+str(robot_id)+"/plan")
+        print('PATH OBSERVER FOR BOT_'+str(robot_id)+' READY')
 
     def status_check(self, msg):
         if msg.data == True:
@@ -51,13 +62,12 @@ class PathDistance(Node):
                             first_time = False
                         prev_x = x
                         prev_y = y
-                        
                     #self.destroy_subscription(subscriber)
                     if ((self.i-1)==len(actual_path_length[self.robot_id])):
                         actual_path_length[self.robot_id].append(total_distance)
                         print("Iteration : " + str(self.i) + " Total length of path for barista_"+str(self.robot_id)+" = "+str(total_distance)+" meters")
-        else:
-            print("max iterations reached press CTRL + C")
+
+    
 
     def final_data():
         finalData = actual_path_length
