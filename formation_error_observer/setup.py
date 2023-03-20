@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [ 
-            'main = formation_error_observer.main:main'
+            'main = formation_error_observer.main:main',
+            'formation_observer_plotter = formation_error_observer.formation_observer_plotter:main'
         ],
     },
 )

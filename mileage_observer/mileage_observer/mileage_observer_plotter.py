@@ -104,7 +104,9 @@ for i in range(no_of_bots):
                 path_travelled[i].append(float(row[2]))
                 actual_path_length[i].append(float(row[1]))
 
-
-MileageObserverPlotter.mileage_path_graph(path_travelled,actual_path_length)
-
+def main():
+     MileageObserverPlotter.mileage_path_graph(path_travelled,actual_path_length)
+     
+if __name__ == '__main__':
+    main()
                 

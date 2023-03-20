@@ -51,5 +51,3 @@ class GoalSubscriber(Node):
         with open(json_path, "w") as output:
             final_goal_data=[goal_data]
             json.dump(final_goal_data, output, sort_keys=True)
-            
-

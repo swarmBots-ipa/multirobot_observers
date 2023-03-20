@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'power_usage_observer = power_usage_observer.power_usage_observer:main'
+            'main = power_usage_observer.main:main'
         ],
     },
 )

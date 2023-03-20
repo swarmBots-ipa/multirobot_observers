@@ -12,7 +12,7 @@ import os
 from mileage_observer import path_observer
 #from nav2_bt_navigator.msg import 
 path_travelled = []
-no_of_bots= int(str((sys.argv[2])))
+no_of_bots= int(sys.argv[2])
 for n in range(no_of_bots):
     path_travelled.append([])
 counter = 0

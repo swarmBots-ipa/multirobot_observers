@@ -129,6 +129,3 @@ class PoseSubscriber(Node):
                 length = len(bot_coordinates[0][i][0])
                 for j in range(length):
                     writer.writerow({'X':bot_coordinates[0][i][0][j],'Y':bot_coordinates[0][i][1][j],'Theta':bot_coordinates[0][i][2][j],'Timestamp':bot_coordinates[0][i][3][j]})
-
-
-

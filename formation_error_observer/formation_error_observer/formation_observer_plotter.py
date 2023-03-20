@@ -33,7 +33,7 @@ class FormationObserverPlotter:
         # print(pose)
         #storing goal coordinates in arrays
 
-        #Goal Coordinates
+        #goal Coordinates
         goal_x_arr = []
         goal_y_arr = []
         goal_theta_arr = []
@@ -49,7 +49,7 @@ class FormationObserverPlotter:
                 goal_x = goal_list["x"]; goal_y= goal_list["y"]; goal_theta = goal_list["theta"];goal_x_arr.append(goal_x);goal_y_arr.append(goal_y);goal_theta_arr.append(goal_theta)
 
 
-        #Pose Coordinates
+        #pose Coordinates
         pose_x_array = []
         pose_y_array = []
         pose_theta_array = []
@@ -61,23 +61,23 @@ class FormationObserverPlotter:
             for k in range(length):
                 pose_list = pose_array[k]
                 pose_x = pose_list["x"]; pose_y = pose_list["y"]; pose_theta = pose_list["theta"];pose_x_array.append(pose_x);pose_y_array.append(pose_y);pose_theta_array.append(pose_theta)
-                                                                
+                                                         
         #Plotting goal and pose dot chart
         if no_of_bots == 1:
             goal_x_points = nmpi.array(goal_x_arr)
             pose_x_points = nmpi.array(pose_x_array)
             goal_y_points = nmpi.array(goal_y_arr)
             pose_y_points = nmpi.array(pose_y_array)
-            mlt.figure("Goal vs Actual")
-            mlt.scatter(goal_x_points, goal_y_points, color='green', label='Goal')
-            mlt.scatter(pose_x_points, pose_y_points, color='red', label='Actual')
+            mlt.figure("command_pose vs attained_pose")
+            mlt.scatter(goal_x_points, goal_y_points, color='green', label='command_pose')
+            mlt.scatter(pose_x_points, pose_y_points, color='red', label='attained_pose')
             mlt.savefig(path + '/graphs/dotgraph.png')
             mlt.legend()
             
         #Creating polygon set
 
         goal_poly_coord={}
-        Pose_poly_coord={}
+        pose_poly_coord={}
         goal_poly_set=[]
         pose_poly_set=[]
 
@@ -85,7 +85,7 @@ class FormationObserverPlotter:
         if no_of_bots>1:
             num_of_runs=  int(len(goal_x_arr)/no_of_bots) #Number of runs
             ig, ax = plt.subplots()
-            plt.suptitle('Goal vs Actual')
+            plt.suptitle('command_pose vs attained_pose')
             i=0
             goal_poly_arr = []
             pose_poly_arr = []
@@ -103,10 +103,10 @@ class FormationObserverPlotter:
                             pose_poly_arr.append(((pose_x_array[i+num_of_runs*j]),(pose_y_array[i+num_of_runs*j]))) 
             
                 goal_poly_coord[l] =  Polygon(goal_poly_arr)
-                Pose_poly_coord[l] = Polygon(pose_poly_arr)
+                pose_poly_coord[l] = Polygon(pose_poly_arr)
                 i+=1
                 goal_poly_set.append(goal_poly_coord[l])
-                pose_poly_set.append(Pose_poly_coord[l])
+                pose_poly_set.append(pose_poly_coord[l])
 
                 goal_poly_arr =[]
                 pose_poly_arr =[]
@@ -117,6 +117,19 @@ class FormationObserverPlotter:
             
             #Ploting Polygons
 
+            goal_x_points = nmpi.array(goal_x_arr)
+            pose_x_points = nmpi.array(pose_x_array)
+            goal_y_points = nmpi.array(goal_y_arr)
+            pose_y_points = nmpi.array(pose_y_array)
+            error = nmpi.round(nmpi.sqrt(nmpi.square(goal_x_points-pose_x_points)+nmpi.square(goal_y_points-pose_y_points)),3)
+            #print(error) 
+
+            mlt.scatter(goal_x_points, goal_y_points, color='blue', label='goal',marker=(5, 1))
+            mlt.scatter(pose_x_points, pose_y_points, color='red', label='attained_pose')
+            for i, txt in enumerate(error):
+                 mlt.annotate(txt, (pose_x_points[i], pose_y_points[i]))
+
+            
             for poly in goal_polygon.geoms:
                 xe, ye = poly.exterior.xy
                 ax.plot(xe, ye, color="blue")
@@ -124,7 +137,7 @@ class FormationObserverPlotter:
                 xe, ye = poly.exterior.xy
                 ax.plot(xe, ye, color="red")
 
-            legend = [Line2D([0], [0], color='b', label='Goal'),Line2D([0], [0], color='r', label='Actual')]
+            legend = [Line2D([0], [0], color='b', label='command_pose'),Line2D([0], [0], color='r', label='attained_pose')]
 
             ax.legend(handles=legend)
 
@@ -134,4 +147,7 @@ class FormationObserverPlotter:
             plt.savefig(path+'/graphs/Polygraph.png')
 
         mlt.show()
-FormationObserverPlotter.Goal_Pose_Graph()
+def main():
+	FormationObserverPlotter.Goal_Pose_Graph()
+if __name__ == '__main__':
+    main()
