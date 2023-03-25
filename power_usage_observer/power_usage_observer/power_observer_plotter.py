@@ -6,27 +6,35 @@ import matplotlib
 
 class PowerObserverPlotter:
     def Power_Graph(time_array,voltage_array,current_array,temperature_array,charge_percentage_array):
-        
+        plt.rcParams['axes.grid'] = True
+        plt.rc('xtick', labelsize =7)
+        fig, axs = plt.subplots(4,no_of_bots,figsize = (15,10))
+
+        #fig, axs = plt.subplots(1,no_of_bots,figsize = (12,10))
+
+
         for i in range(no_of_bots):
 
-            fig, axs = plt.subplots(2, 2,figsize = (15,10))
-            fig.tight_layout(pad=5.0)
-        
+            #fig, axs = plt.subplots(4, 1,figsize = (15,10))
+            fig.tight_layout(pad=3.0)
+            #fig.suptitle("Barista_  Battery State Observer")
+            
 
-            axs[0, 0].plot(voltage_array[i], time_array[i])
-            axs[0, 0].set_title('Voltage Graph')
-            axs[0, 0].set(xlabel= 'voltage', ylabel='time')
-            axs[0, 1].plot(current_array[i], time_array[i], 'tab:orange')
-            axs[0, 1].set_title('Current Graph')
-            axs[0, 1].set(xlabel= 'current', ylabel='time')
-            axs[1, 0].plot(temperature_array[i], time_array[i], 'tab:green')
-            axs[1, 0].set_title('Temperature Graph')
-            axs[1, 0].set(xlabel= 'temperature', ylabel='time')
-            axs[1, 1].plot(charge_percentage_array[i], time_array[i], 'tab:red')
-            axs[1, 1].set_title('Charge Percentage Graph')
-            axs[1, 1].set(xlabel= 'charge percentage', ylabel='time')
+            axs[0,i].plot(time_array[i],voltage_array[i])
+            axs[0,i].set_title('Barista_  Battery State Observer \n \n Battery Voltage ')
+            axs[0,i].set(xlabel='time (seconds)',ylabel= 'voltage (V)')
+            axs[1,i].plot(time_array[i],current_array[i],  'tab:orange')
+            axs[1,i].set_title('Current Discharge')
+            axs[1,i].set( xlabel='time (seconds)',ylabel= 'current (A)')
+            axs[2,i].plot(time_array[i],temperature_array[i],  'tab:green')
+            axs[2,i].set_title('Battery Temperature')
+            axs[2,i].set( xlabel='time (seconds)',ylabel= 'temperature (degree celsius)')
+            axs[3,i].plot(time_array[i],charge_percentage_array[i],  'tab:red')
+            axs[3,i].set_title('Battery Charge Percentage')
+            axs[3,i].set(xlabel='time (seconds)',ylabel= 'charge percentage (%)')
         
             plt.savefig(graph_path+str(i)+'.png')
+
         plt.show()
 
 
@@ -60,15 +68,37 @@ for i in range(no_of_bots):
 
 for i in range(no_of_bots):
     with open(csv_path+str(i)+'.csv', 'r') as csvfile:
+             
         reader = csv.reader(csvfile)
-        for row in reader:
+        counter = 1
+  
+        for abc in reader:
+            if abc.__contains__("time"):
+                continue
+           # time_array[i].append(counter)
+            voltage_array[i].append(nmpi.round(float(abc[1]),3))
+            current_array[i].append((nmpi.round(float(abc[2]),3))*(-1))
+            temperature_array[i].append(nmpi.round(float(abc[3]),3))
+            charge_percentage_array[i].append((nmpi.round(float(abc[4]),3))*100)
+            counter = counter+1    
+  
+
+for i in range(no_of_bots):
+    with open(csv_path+str(i)+'.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        rows = list(reader)
+        first_row = rows[1][0]
+        last_row = rows[-1][0]
+        
+        c = 1
+        mean_time = (int(last_row)-int(first_row))/(counter-2)
+        mean_time = round(mean_time)
+        for row in rows:
             if row.__contains__("time"):
                 continue
-            time_array[i].append(row[0])
-            voltage_array[i].append(nmpi.round(float(row[1]),3))
-            current_array[i].append(nmpi.round(float(row[2]),3))
-            temperature_array[i].append(nmpi.round(float(row[3]),3))
-            charge_percentage_array[i].append(nmpi.round(float(row[4]),3))
+            time_array[i].append(c)
+            c = c+mean_time
+        print(time_array)
 PowerObserverPlotter.Power_Graph(time_array,voltage_array,current_array,temperature_array,charge_percentage_array)
         
         
