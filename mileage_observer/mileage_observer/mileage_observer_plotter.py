@@ -37,11 +37,11 @@ class MileageObserverPlotter:
             matplotlib.rc('figure', titlesize =20)
             #fig, ax = plt.subplots(1,len(path_travelled),figsize = (12,10))
             rects1 = ax[c].bar(ind - width/2, path_travelled_data, width, yerr=mileage_std,label='Path Travelled ')
-            rects2 = ax[c].bar(ind + width/2, actual_path_length_data, width, yerr=path_dist_std,label='Actual Path Length')
+            rects2 = ax[c].bar(ind + width/2, actual_path_length_data, width, yerr=path_dist_std,label='Path Estimated')
             # Add some text for labels, title and custom x-axis tick labels, etc.
             ax[c].set_ylabel('Distance in meters')
-            ax[c].set_xlabel('Iteration count')
-            ax[c].set_title('Path Travelled vs Actual Path Length - Barista : ' + str(i))
+            ax[c].set_xlabel('Number of Iterations')
+            ax[c].set_title('Path Travelled vs Path Estimated - Agent : ' + str(i))
             ax[c].set_xticks(ind)
             ax[c].set_xticklabels(iteration)
             ax[c].legend()
@@ -73,7 +73,7 @@ for root, dirs, files in os.walk(search_dir):
         break
 path = file_location.replace('mileage_observer/'+filename,'data')
 csv_path = (path + "/csv/Robot")
-graph_path = path+'/graphs/Barista_'
+graph_path = path+'/graphs/Agent_'
 csv_folder= path+"/csv"
 no_of_bots = 0
 file_list = os.listdir(csv_folder)

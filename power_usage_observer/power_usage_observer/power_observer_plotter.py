@@ -6,7 +6,7 @@ import matplotlib
 
 class PowerObserverPlotter:
     def Power_Graph(time_array,voltage_array,current_array,temperature_array,charge_percentage_array):
-        plt.rcParams['axes.grid'] = True
+        #plt.rcParams['axes.grid'] = True
         plt.rc('xtick', labelsize =7)
         fig, axs = plt.subplots(4,no_of_bots,figsize = (15,10))
 
@@ -21,20 +21,31 @@ class PowerObserverPlotter:
             
 
             axs[0,i].plot(time_array[i],voltage_array[i])
-            axs[0,i].set_title('Barista_  Battery State Observer \n \n Battery Voltage ')
+            axs[0,i].set_title('Agent_  Battery State Observer \n \n Battery Voltage ')
             axs[0,i].set(xlabel='time (seconds)',ylabel= 'voltage (V)')
+            axs[0,i].minorticks_on()
+            axs[0,i].grid(which='major', linestyle='-', linewidth='0.8')
+            axs[0,i].grid(which='minor',linestyle='-', linewidth='0.3')
             axs[1,i].plot(time_array[i],current_array[i],  'tab:orange')
             axs[1,i].set_title('Current Discharge')
             axs[1,i].set( xlabel='time (seconds)',ylabel= 'current (A)')
+            axs[1,i].minorticks_on()
+            axs[1,i].grid(which='major', linestyle='-', linewidth='0.8')
+            axs[1,i].grid(which='minor',linestyle='-', linewidth='0.3')
             axs[2,i].plot(time_array[i],temperature_array[i],  'tab:green')
             axs[2,i].set_title('Battery Temperature')
             axs[2,i].set( xlabel='time (seconds)',ylabel= 'temperature (degree celsius)')
+            axs[2,i].minorticks_on()
+            axs[2,i].grid(which='major', linestyle='-', linewidth='0.8')
+            axs[2,i].grid(which='minor',linestyle='-', linewidth='0.3')
             axs[3,i].plot(time_array[i],charge_percentage_array[i],  'tab:red')
             axs[3,i].set_title('Battery Charge Percentage')
             axs[3,i].set(xlabel='time (seconds)',ylabel= 'charge percentage (%)')
+            axs[3,i].minorticks_on()
+            axs[3,i].grid(which='major', linestyle='-', linewidth='0.8')
+            axs[3,i].grid(which='minor',linestyle='-', linewidth='0.3')
         
-            plt.savefig(graph_path+str(i)+'.png')
-
+        plt.savefig(graph_path+'.png')
         plt.show()
 
 
@@ -46,7 +57,7 @@ for root, dirs, files in os.walk(search_dir):
         break
 path = file_location.replace('power_usage_observer/'+filename,'data')
 csv_path = (path + "/csv/Robot")
-graph_path = path+'/graphs/Barista_'
+graph_path = path+'/graphs/Agent'
 csv_folder= path+"/csv"
 no_of_bots = 0
 file_list = os.listdir(csv_folder)
@@ -98,7 +109,10 @@ for i in range(no_of_bots):
                 continue
             time_array[i].append(c)
             c = c+mean_time
-        print(time_array)
-PowerObserverPlotter.Power_Graph(time_array,voltage_array,current_array,temperature_array,charge_percentage_array)
+        #print(time_array)
+def main():
+    PowerObserverPlotter.Power_Graph(time_array,voltage_array,current_array,temperature_array,charge_percentage_array)
+if __name__ == '__main__':
+    main()
         
         
