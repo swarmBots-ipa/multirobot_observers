@@ -22,7 +22,6 @@ class FormationObserverPlotter:
                 break
         path = file_location.replace('formation_error_observer/'+filename,'data')
 
-
         pose_file = open(path + '/json/Poses.json', 'r')
         goal_file = open(path + '/json/Goals.json', 'r')
         pose_data = pose_file.read()
