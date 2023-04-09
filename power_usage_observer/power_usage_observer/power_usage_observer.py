@@ -7,6 +7,8 @@ import sys
 import os
 from rclpy.executors import SingleThreadedExecutor
 
+#Global Variables,
+#Creating empty arrays to store data based on no. of bots
 no_of_bots = int(sys.argv[1])
 
 time_array = []
@@ -21,6 +23,7 @@ for n in range(no_of_bots):
     temperature_array.append([])
     charge_percentage_array.append([])
 
+#Creating and assigning paths
 filename = os.path.basename(__file__)
 search_dir = '/home/'
 for root, dirs, files in os.walk(search_dir):
@@ -33,6 +36,7 @@ csv_path = path + "/csv/Robot"
 csv_folder= path+"/csv"
 graph_folder = path+"/graphs"
 
+#Clearing old Data
 def clear_old_data(folder_path):
     file_list = os.listdir(folder_path)
     for file_name in file_list:
@@ -43,14 +47,15 @@ clear_old_data(graph_folder)
 
 
 class PowerUsageObserver(Node):
-   
+   #Subscribing topics
     def __init__(self,robot_id):
         super().__init__("power_usage_observer_"+str(robot_id))
         self.get_logger().info("power usage observer "+str(robot_id) +" ready")
         self.subscription3 = self.create_subscription(BatteryState,'/battery_state',self.callback,10)
         self.robot_id = robot_id
         pass
-
+    
+    #Frtching current, voltage, temperaure,time, and chhhhharge percentage
     def callback(self, data:BatteryState):
         time = data.header._stamp.sec
         voltage = data.voltage
@@ -65,6 +70,7 @@ class PowerUsageObserver(Node):
         self.get_logger().info("vtg = "+str(voltage) + " current =" +str(current) + " temp =" + str(temperature) + " percent = " + str(charge_percentage) + " time = " + str(time))
         self.csv_data()
     
+    #Storing values into a csv
     def csv_data(self):
         for i in range(no_of_bots):
             with open( csv_path + str(i) + '.csv', 'w', newline='')as f:

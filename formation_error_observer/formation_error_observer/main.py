@@ -7,6 +7,8 @@ from formation_error_observer.goal_coordinates import GoalSubscriber
 import sys
 nodes = []
 i=0
+
+#Appending Nodes based on No of Robots
 def main(args=None):
     agents=int(sys.argv[2])
     rclpy.init(args=args)
@@ -27,12 +29,14 @@ def main(args=None):
     except KeyboardInterrupt:
         executor.shutdown() 
 
+#Indicates if Iteration is completed for a particular Robot
 def iteration_indicator(i):
     print('=================================================')
     print("<--ITERATION "+str(i)+" COMPLETED FOR ALL BOTS-->")
     print('=================================================')
     print("<----------PLEASE START NEXT ITERATION---------->")
 
+#Shuts down the node ones max iterations are achieved
 def nodes_shutdown(i):
     print('=================================================')
     print("<--ITERATION "+str(i)+" COMPLETED FOR ALL BOTS-->")

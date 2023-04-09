@@ -9,10 +9,11 @@ import json
 import os
 import sys 
 
-#Setting Arrays and dict for data storage (data = goal final coordinates)
-#globaaaaal variables
+#global variables
 no_of_bots= int(str((sys.argv[2])))
 goal_data ={}
+
+#creating empty arrays for storing data based on no of robots
 for i in range(no_of_bots):
     goal_data["barista_"+str(i)+"_goal"] = list()
 
@@ -28,7 +29,7 @@ path = file_location.replace('formation_error_observer/'+filename,'data')
 json_path = (path + "/json/Goals.json")
 
 class GoalSubscriber(Node):
-   
+   #Subscribing topics
     def __init__(self,robot_id):
         super().__init__("Goal_subscriber_" + str(robot_id))
         self.subscription = self.create_subscription(PoseStamped,'/barista_'+str(robot_id)+'/send_pose',self.callback,10)

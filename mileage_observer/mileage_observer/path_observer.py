@@ -10,7 +10,9 @@ from actionlib_msgs.msg import GoalID
 from std_msgs.msg import Bool
 import sys
 import os
-      
+
+#Global Variables     
+# Creating Empty arrays to store data based on no. of robots 
 subscriber = None
 actual_path_length = []
 no_of_bots= int(str((sys.argv[2])))
@@ -22,12 +24,14 @@ for root, dirs, files in os.walk(search_dir):
     if filename in files:
         file_location = os.path.join(root, filename)
         break
+
+#Creating and Assigning paths
 path = file_location.replace('mileage_observer/'+filename,'data')
 csv_path = (path + "/csv/Robot")
 
 class PathDistance(Node):
       
-
+    #Subscribing to topics
     def __init__(self,arg,robot_id):
         global subscriber  
         self.i=1
@@ -38,10 +42,12 @@ class PathDistance(Node):
         self.robot_id=robot_id
         print('PATH OBSERVER FOR BOT_'+str(robot_id)+' READY')
 
+    #Counting iterations based on (Goal Reached) success message
     def status_check(self, msg):
         if msg.data == True:
             self.i+=1
-                        
+
+    #Calculating and printing path length               
     def printPath(self,path):
         
         global subscriber
@@ -49,7 +55,7 @@ class PathDistance(Node):
         prev_x = 0.0
         prev_y = 0.0
         total_distance = 0.0
-       # if(self.i<=self.iterations):
+
         if self.i <= self.iterations:
             if len(path.poses) > 0:
                     for current_point in path.poses:
@@ -68,7 +74,4 @@ class PathDistance(Node):
                         print("Iteration : " + str(self.i) + " Total length of path for barista_"+str(self.robot_id)+" = "+str(total_distance)+" meters")
 
     
-
-    def final_data():
-        finalData = actual_path_length
-        return finalData             
+   

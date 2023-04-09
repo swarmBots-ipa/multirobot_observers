@@ -13,7 +13,10 @@ from matplotlib.lines import Line2D
 import os
 
 class FormationObserverPlotter:
+
     def Goal_Pose_Graph():
+
+        #Locating the json files and reading data
         filename = os.path.basename(__file__)
         search_dir = '/home/'
         for root, dirs, files in os.walk(search_dir):
@@ -28,8 +31,7 @@ class FormationObserverPlotter:
         goal_data = goal_file.read()
         goal = json.loads(goal_data)
         pose = json.loads(pose_data)
-        # print(goal)
-        # print(pose)
+        
         #storing goal coordinates in arrays
 
         #goal Coordinates
@@ -47,7 +49,7 @@ class FormationObserverPlotter:
                 goal_list = goal_array[k]
                 goal_x = goal_list["x"]; goal_y= goal_list["y"]; goal_theta = goal_list["theta"];goal_x_arr.append(goal_x);goal_y_arr.append(goal_y);goal_theta_arr.append(goal_theta)
 
-
+        #Storing Pose Coordinates in array
         #pose Coordinates
         pose_x_array = []
         pose_y_array = []

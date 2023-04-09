@@ -10,12 +10,15 @@ from rclpy.executors import SingleThreadedExecutor
 import sys
 import os
 from mileage_observer import path_observer
-#from nav2_bt_navigator.msg import 
+#Global Variables     
+# Creating Empty arrays to store data based on no. of robots 
 path_travelled = []
 no_of_bots= int(sys.argv[2])
 for n in range(no_of_bots):
     path_travelled.append([])
 counter = 0
+
+#Creating and Assigning paths
 filename = os.path.basename(__file__)
 search_dir = '/home/'
 for root, dirs, files in os.walk(search_dir):
@@ -27,6 +30,7 @@ csv_path = path + "/csv/Robot"
 csv_folder= path+"/csv"
 graph_folder = path+"/graphs"
 
+#Clearing old Data
 def clear_old_data(folder_path):
     file_list = os.listdir(folder_path)
     for file_name in file_list:
@@ -38,6 +42,7 @@ clear_old_data(graph_folder)
 
 class MileageObserver(Node):
     
+    #Creating subsribers
     def __init__(self,arg,robot_id):
         super().__init__("mileage_observer_"+str(robot_id))
         self.subscription2 = self.create_subscription(PoseStamped,'barista_'+str(robot_id)+'/send_pose',self.getGoalPoint,10)
@@ -54,11 +59,16 @@ class MileageObserver(Node):
         self.goal_point = []
         self.first_time = True
         self.robot_number = robot_id
+
+    #Fetching goal point
     def getGoalPoint(self, g):
         self.goal_point = g
 
+    #Calculating distance between two instances
     def distancePoints(self,x1,y1,x2,y2):
         return math.hypot(x2 - x1, y2 - y1)
+    
+    #Summing up all instances and getting goal distance
     def addPointToTotalDistance(self, current_point):
         
         if self.first_time:
@@ -74,6 +84,7 @@ class MileageObserver(Node):
             self.prev_x = self.x
             self.prev_y = self.y
            
+    #Checking the status, storing data, idincating iteration completion.
     def status_check(self, msg):
         """Checking wheather the robot has completed the navigation to Goal
 
@@ -108,6 +119,7 @@ class MileageObserver(Node):
             self.first_time = True
             self.total_distance = 0
 
+    #Storing data into CSV
     def csv_data(self):
         for i in range(no_of_bots):
             with open(csv_path + str(i) + '.csv', 'w', newline='')as f:
@@ -119,7 +131,4 @@ class MileageObserver(Node):
                     writer.writerow({'Iteration No':j+1,'Actual Path Length':actual_path_length[i][j],'Path Travelled':path_travelled[i][j]})
 
 
-    def final_data():
-        finalData = path_travelled
-        return finalData  
-
+ 

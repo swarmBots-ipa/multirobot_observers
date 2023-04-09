@@ -6,22 +6,21 @@ import matplotlib
 
 class PowerObserverPlotter:
     def Power_Graph(time_array,voltage_array,current_array,temperature_array,charge_percentage_array):
-        #plt.rcParams['axes.grid'] = True
+        
         plt.rc('xtick', labelsize =7)
         fig, axs = plt.subplots(4,no_of_bots,figsize = (15,10))
 
-        #fig, axs = plt.subplots(1,no_of_bots,figsize = (12,10))
+        
 
 
         for i in range(no_of_bots):
 
-            #fig, axs = plt.subplots(4, 1,figsize = (15,10))
             fig.tight_layout(pad=3.0)
-            #fig.suptitle("Barista_  Battery State Observer")
+            
             
 
             axs[0,i].plot(time_array[i],voltage_array[i])
-            axs[0,i].set_title('Agent_  Battery State Observer \n \n Battery Voltage ')
+            axs[0,i].set_title('Agent_'+str[i]+' Battery State Observer \n \n Battery Voltage ')
             axs[0,i].set(xlabel='time (seconds)',ylabel= 'voltage (V)')
             axs[0,i].minorticks_on()
             axs[0,i].grid(which='major', linestyle='-', linewidth='0.8')
@@ -48,6 +47,8 @@ class PowerObserverPlotter:
         plt.savefig(graph_path+'.png')
         plt.show()
 
+#Globbal Variables
+#Setting path variables
 
 filename = os.path.basename(__file__)
 search_dir = '/home/'
@@ -61,6 +62,8 @@ graph_path = path+'/graphs/Agent'
 csv_folder= path+"/csv"
 no_of_bots = 0
 file_list = os.listdir(csv_folder)
+
+#Creating empty arrays to store data based on no of bots
 for file_name in file_list:
         no_of_bots+=1
 time_array = []
@@ -76,7 +79,7 @@ for i in range(no_of_bots):
     temperature_array.append([])
     charge_percentage_array.append([])
 
-
+#Reading data from csv
 for i in range(no_of_bots):
     with open(csv_path+str(i)+'.csv', 'r') as csvfile:
              
@@ -109,7 +112,7 @@ for i in range(no_of_bots):
                 continue
             time_array[i].append(c)
             c = c+mean_time
-        #print(time_array)
+        
 def main():
     PowerObserverPlotter.Power_Graph(time_array,voltage_array,current_array,temperature_array,charge_percentage_array)
 if __name__ == '__main__':

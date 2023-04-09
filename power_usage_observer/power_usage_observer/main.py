@@ -6,7 +6,7 @@ import sys
 from power_usage_observer.power_usage_observer import PowerUsageObserver
 
 
-
+#Initializing and appending nodes based on no. of robots
 nodes = []
 def main(args=None):
     agents = int(sys.argv[1])

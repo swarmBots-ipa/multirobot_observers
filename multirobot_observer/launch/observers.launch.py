@@ -16,30 +16,27 @@ for arg in sys.argv:
 def generate_launch_description():
     ld = LaunchDescription([
         Node(
-           package='formation_error_observer',
-           executable='main',
-           name='formation_error_observer_node',
-           arguments=[str(No_of_Iteration),str(No_of_Robots)]
+            package='formation_error_observer',
+            executable='main',
+            arguments=[str(No_of_Iteration),str(No_of_Robots)]
             
         ),
 
         Node(
             package='mileage_observer',
             executable='main',
-            name='mileage_observer_node',
             arguments=[str(No_of_Iteration),str(No_of_Robots)]
-        
-        )
+            
+        ),
 
         Node(
-           package='power_usage_observer',
-           executable='main',
-           name='power_observer_node',
-           arguments=[str(No_of_Robots)]
+            package='power_usage_observer',
+            executable='main',
+            arguments=[str(No_of_Robots)]
             
         )
 
-
+    
 
     ])
      

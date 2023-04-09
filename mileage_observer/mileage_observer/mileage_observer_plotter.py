@@ -11,6 +11,8 @@ class MileageObserverPlotter:
     
     def mileage_path_graph(path_travelled,actual_path_length):
         c=0
+
+        #plotting graph
         fig, ax = plt.subplots(len(path_travelled),1,figsize = (12,10))
         for i in range(len(path_travelled)):
             def trunc(values, decs =0):
@@ -65,6 +67,9 @@ class MileageObserverPlotter:
         plt.show()   
 
 
+#Global Variables
+#Crating and assigning paths
+
 filename = os.path.basename(__file__)
 search_dir = '/home/'
 for root, dirs, files in os.walk(search_dir):
@@ -82,11 +87,12 @@ for file_name in file_list:
 path_travelled =[]
 actual_path_length =[]
 
+#Creating empty arrays bsed on no. of bots to store data
 for i in range(no_of_bots):
     path_travelled.append([])
     actual_path_length.append([])
 
-
+#Fetching values from CSV
 for i in range(no_of_bots):
 
     with open(csv_path+str(i)+'.csv', 'r') as csvfile:

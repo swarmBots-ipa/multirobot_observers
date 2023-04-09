@@ -11,12 +11,13 @@ import csv
 from formation_error_observer.goal_coordinates import GoalSubscriber
 import os
 import sys
-
-#Setting Arrays and dict for data storage (data = pose final coordinates; BotCoord = all coordinates at an instance)
 #global variables
+
+#Fetching no of bots from szstem arguments
 no_of_bots= int(str((sys.argv[2])))
 pose_data ={}
 
+#creating empty arrays for storing data based on no of robots
 for i in range(no_of_bots):
     pose_data["barista_"+str(i)+"_pose"] = list()
 bot_coord =[]
@@ -44,7 +45,7 @@ graph_folder = path+"/graphs"
 json_path = (path + "/json/Poses.json")
 csv_path = (path + "/csv/Robot")
 
-
+#Clearing Old data
 def clear_old_data(folder_path):
     file_list = os.listdir(folder_path)
     for file_name in file_list:
@@ -55,13 +56,14 @@ clear_old_data(json_folder)
 clear_old_data(csv_folder)
 clear_old_data(graph_folder)
 
+
 class PoseSubscriber(Node):
    
     #Subscriber function 
     
     def __init__(self,arg,robot_id):
     
-        # for i in range(no_of_bots):
+        
         super().__init__("Pose_subscriber_" + str(robot_id))
         self.subscription = self.create_subscription(PoseWithCovarianceStamped,'/barista_'+str(robot_id)+'/amcl_pose',self.callback,10)    
         self.subscription2 = self.create_subscription(Bool,'/barista_'+str(robot_id)+'/goal_status',self.goal_callback,10)
@@ -95,7 +97,7 @@ class PoseSubscriber(Node):
             self.iteration_counter()
             
             
-
+#Counting no. of iterations and shutting down node after reaching max iterations
     def iteration_counter(self):
         self.i += 1
         self.get_logger().info( "barista_" + str(self.robot_id)+ ": Iteration No.(" + str(self.i) + ") Completed.")

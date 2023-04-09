@@ -9,6 +9,8 @@ import sys
 
 nodes =[]
 def main(args=None):
+
+    #Initializing and appending nodes based on no of robots
     agents=int(sys.argv[2])
     rclpy.init(args=args)
     try:
@@ -27,8 +29,9 @@ def main(args=None):
     
 
     except KeyboardInterrupt:
-       
         executor.shutdown()
+
+    #Called when MAX iterations are achieved    
 def shut_down():
         executor.shutdown()
 
