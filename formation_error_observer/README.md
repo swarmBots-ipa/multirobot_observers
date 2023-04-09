@@ -18,4 +18,4 @@ Json and CSV files and graphs can be found in "<workspace>/src/multirobot_observ
 
 ## Results
 images
-![](polygraph.png)
+![](Polygraph.png)
