@@ -29,21 +29,7 @@ def main(args=None):
     except KeyboardInterrupt:
         executor.shutdown() 
 
-#Indicates if Iteration is completed for a particular Robot
-def iteration_indicator(i):
-    print('=================================================')
-    print("<--ITERATION "+str(i)+" COMPLETED FOR ALL BOTS-->")
-    print('=================================================')
-    print("<----------PLEASE START NEXT ITERATION---------->")
-
-#Shuts down the node ones max iterations are achieved
-def nodes_shutdown(i):
-    print('=================================================')
-    print("<--ITERATION "+str(i)+" COMPLETED FOR ALL BOTS-->")
-    print('=================================================')
-    print("<------------MAX ITERATIONS ACHIEVED------------>")
-    print('=================================================')
-    print('Press CTRL + C to exit')
+def nodes_shutdown():
     executor.shutdown()
     
 

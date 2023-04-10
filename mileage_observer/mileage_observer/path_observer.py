@@ -40,7 +40,7 @@ class PathDistance(Node):
         self.subscriber = self.create_subscription(Path,'/barista_'+str(robot_id)+'/plan', self.printPath,10)
         self.subscription3 = self.create_subscription(Bool,'/barista_'+str(robot_id)+'/goal_status',self.status_check,10)
         self.robot_id=robot_id
-        print('PATH OBSERVER FOR BOT_'+str(robot_id)+' READY')
+        self.get_logger().info('PATH OBSERVER FOR BOT_'+str(self.robot_id)+' READY')
 
     #Counting iterations based on (Goal Reached) success message
     def status_check(self, msg):
@@ -71,7 +71,7 @@ class PathDistance(Node):
                     #self.destroy_subscription(subscriber)
                     if ((self.i-1)==len(actual_path_length[self.robot_id])):
                         actual_path_length[self.robot_id].append(total_distance)
-                        print("Iteration : " + str(self.i) + " Total length of path for barista_"+str(self.robot_id)+" = "+str(total_distance)+" meters")
+                        self.get_logger().info("Iteration : " + str(self.i) + " Total length of path for barista_"+str(self.robot_id)+" = "+str(total_distance)+" meters")
 
     
    

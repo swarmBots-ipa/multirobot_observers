@@ -88,7 +88,7 @@ class PoseSubscriber(Node):
 #fetching last coordinates after successfully reaching goal
 
     def goal_callback(self,goal:Bool):
-        print('=================================================')
+        self.get_logger().info('=================================================')
         if (goal.data==True):
             self.get_logger().info("barista_"+str(self.robot_id)+": reached goal.")
             self.get_logger().info("barista_"+str(self.robot_id)+": Pose Coordinates: (x = " + str(self._x) + ", y = " + str(self._y) + ", Theta = " + str(self._theta)+")")
@@ -105,12 +105,20 @@ class PoseSubscriber(Node):
         counter+=1
         if self.i==self.iteration:
             if counter == no_of_bots:
+                self.get_logger().info('=================================================')
+                self.get_logger().info("<--ITERATION "+str(self.i)+" COMPLETED FOR ALL BOTS-->")
+                self.get_logger().info('=================================================')
+                self.get_logger().info("<------------MAX ITERATIONS ACHIEVED------------>")
+                self.get_logger().info('=================================================')
+                self.get_logger().info('Press CTRL + C to exit')
                 from formation_error_observer.main import nodes_shutdown
-                nodes_shutdown(self.i)
+                nodes_shutdown()
         else:
             if counter == no_of_bots:
-                from formation_error_observer.main import iteration_indicator
-                iteration_indicator(self.i)
+                self.get_logger().info('=================================================')
+                self.get_logger().info("<--ITERATION "+str(self.i)+" COMPLETED FOR ALL BOTS-->")
+                self.get_logger().info('=================================================')
+                self.get_logger().info("<----------PLEASE START NEXT ITERATION---------->")
                 counter = 0
         
 

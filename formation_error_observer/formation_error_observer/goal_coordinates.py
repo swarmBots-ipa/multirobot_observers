@@ -43,7 +43,7 @@ class GoalSubscriber(Node):
         y=pose.pose.position.y
         rot_q = pose.pose.orientation
         (roll, pitch, theta) = euler_from_quaternion([rot_q.x, rot_q.y, rot_q.z, rot_q.w])  
-        print('=================================================')
+        self.get_logger().info('=================================================')
         self.get_logger().info("barista_"+str(self.robot_id)+": Goal Coordinates: (x = " + str(x) + ", y = " + str(y) + ", Theta = " + str(theta)+")")
         goal_data["barista_"+str(self.robot_id)+"_goal"].append({"x":x, "y":y, "theta":theta})
         GoalSubscriber.final_data()

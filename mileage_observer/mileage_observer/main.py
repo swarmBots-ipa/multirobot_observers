@@ -14,7 +14,7 @@ def main(args=None):
     agents=int(sys.argv[2])
     rclpy.init(args=args)
     try:
-
+        
         for i in range(agents):
             pose_node = PathDistance(sys.argv[1],robot_id = i)
             nodes.append(pose_node)

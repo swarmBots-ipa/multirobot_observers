@@ -48,7 +48,7 @@ class MileageObserver(Node):
         self.subscription2 = self.create_subscription(PoseStamped,'barista_'+str(robot_id)+'/send_pose',self.getGoalPoint,10)
         self.subscription2 = self.create_subscription(Odometry,'barista_'+str(robot_id)+'/odom',self.addPointToTotalDistance,10)
         self.subscription3 = self.create_subscription(Bool,'/barista_'+str(robot_id)+'/goal_status',self.status_check,10)
-        print('MILEAGE OBSERVER FOR BOT_'+str(robot_id)+' READY')
+        self.get_logger().info('MILEAGE OBSERVER FOR BOT_'+str(robot_id)+' READY')
         self.iteration = int(arg)
         self.i=0
         self.pose_subscriber = None
@@ -94,26 +94,26 @@ class MileageObserver(Node):
         if msg.data == True:
             self.i+=1
             if(self.i<=self.iteration):
-                print('batrista_0'+str(self.robot_number)+" stopped")
-                print("Distance travelled by barista_"+str(self.robot_number) + " in iteration "+ str(self.i) + " :", self.total_distance)
+                self.get_logger().info('batrista_0'+str(self.robot_number)+" stopped")
+                self.get_logger().info("Distance travelled by barista_"+str(self.robot_number) + " in iteration "+ str(self.i) + " :" + str(self.total_distance))
                 path_travelled[self.robot_number].append(self.total_distance)
                 global actual_path_length
                 actual_path_length = path_observer.actual_path_length
                 self.csv_data()
                 global counter
                 counter+=1
-                print(counter)
+                
                 if counter==no_of_bots:
-                    print('=======================================')
-                    print('==ITERATION '+str(self.i)+' COMPLETE===')
-                    print('=======================================')
+                    self.get_logger().info('=======================================')
+                    self.get_logger().info('==ITERATION '+str(self.i)+' COMPLETE===')
+                    self.get_logger().info('=======================================')
                     if(self.i != self.iteration):
-                        print('=====PLEASE START NEXT ITERATION=======')
-                        print('=======================================')
+                        self.get_logger().info('=====PLEASE START NEXT ITERATION=======')
+                        self.get_logger().info('=======================================')
                     counter =0
                     if self.i == self.iteration:
-                        print("MAX ITERATIONS ACHIEVED. PRESS CTRL + C")
-                        print('=======================================')
+                        self.get_logger().info("MAX ITERATIONS ACHIEVED. PRESS CTRL + C")
+                        self.get_logger().info('=======================================')
                         from mileage_observer.main import shut_down
                         shut_down()
             self.first_time = True

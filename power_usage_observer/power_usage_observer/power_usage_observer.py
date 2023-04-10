@@ -29,7 +29,7 @@ search_dir = '/home/'
 for root, dirs, files in os.walk(search_dir):
     if filename in files:
         file_location = os.path.join(root, filename)
-        print(file_location)
+       # print(file_location)
         break
 path = file_location.replace('power_usage_observer/'+filename,'data')
 csv_path = path + "/csv/Robot"
@@ -78,7 +78,7 @@ class PowerUsageObserver(Node):
                 writer = csv.DictWriter(f, fieldnames=field_names)
                 writer.writeheader()
                 length = len(voltage_array[i])
-                print(voltage_array)
+               # print(voltage_array)
                 for j in range(length):
                     writer.writerow({'time':time_array[i][j],'voltage':voltage_array[i][j],'current':current_array[i][j],'temperature':temperature_array[i][j],'charge_percentage':charge_percentage_array[i][j]})   
 

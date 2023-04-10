@@ -18,6 +18,7 @@ def generate_launch_description():
         Node(
             package='formation_error_observer',
             executable='main',
+            name = 'formation_error_observer',
             arguments=[str(No_of_Iteration),str(No_of_Robots)]
             
         ),
@@ -25,6 +26,7 @@ def generate_launch_description():
         Node(
             package='mileage_observer',
             executable='main',
+            name = 'mileage_observer',
             arguments=[str(No_of_Iteration),str(No_of_Robots)]
             
         ),
@@ -32,6 +34,7 @@ def generate_launch_description():
         Node(
             package='power_usage_observer',
             executable='main',
+            name = 'power_usage_observer',
             arguments=[str(No_of_Robots)]
             
         )
