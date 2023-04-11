@@ -14,7 +14,7 @@ ros2 run multirobot_formation agent_formation <Number of agents>
 ## Launching observers
 
 ```
-ros2 run mileage_observer main [No. of iterations] [No. of bots]
+ros2 run mileage_observer main <Number of iterations> <Number of agents>
 
 ```
 ## Generate visualizations 
