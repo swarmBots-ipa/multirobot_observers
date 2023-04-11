@@ -35,7 +35,7 @@ def generate_launch_description():
             package='power_usage_observer',
             executable='main',
             name = 'power_usage_observer',
-            arguments=[str(No_of_Robots)]
+            arguments=[str(No_of_Robots)] # Number of iterations need not be mentioned as the power parameters are observed till the agents are turned off
             
         )
 
