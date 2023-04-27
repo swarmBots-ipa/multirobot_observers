@@ -13,7 +13,11 @@ ros2 run power_usage_observer main <Number of agents>
 ros2 run power_usage_observer mileage_observer_plotter
 
 ```
+## Save in Database
+```
+ros2 run power_usage_observer influxdata <Number of agents>
 
+```
 Json and CSV files and graphs can be found in "<workspace>/src/multirobot_observers/power_usage_observer/data" folder
 
 ## Results

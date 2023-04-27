@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'main = power_usage_observer.main:main',
-            'power_observer_plotter = power_usage_observer.power_observer_plotter:main'
+            'power_observer_plotter = power_usage_observer.power_observer_plotter:main',
+            'influxdata = power_usage_observer.influxData:main'
 
         ],
     },
