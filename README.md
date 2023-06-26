@@ -30,10 +30,10 @@ ros2 launch multirobot_observer plotter.launch.py
 ```
 ## Results
 Formation error observer plot
-![](Polygraph.png)
+![](docs/Polygraph.png)
 
 Mileage observer plot
-![](Agent_mileage_plot.png)
+![](docs/Agent_mileage_plot.png)
 
 Power usage observer plot
-![](Agent.png)
+![](docs/Agent.png)

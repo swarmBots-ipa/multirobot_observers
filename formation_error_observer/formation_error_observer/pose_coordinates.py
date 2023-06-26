@@ -19,7 +19,7 @@ pose_data ={}
 
 #creating empty arrays for storing data based on no of robots
 for i in range(no_of_bots):
-    pose_data["barista_"+str(i)+"_pose"] = list()
+    pose_data["agent_"+str(i)+"_pose"] = list()
 bot_coord =[]
 for i in range(no_of_bots):
     bot_coord.append([])
@@ -65,13 +65,13 @@ class PoseSubscriber(Node):
     
         
         super().__init__("Pose_subscriber_" + str(robot_id))
-        self.subscription = self.create_subscription(PoseWithCovarianceStamped,'/barista_'+str(robot_id)+'/amcl_pose',self.callback,10)    
-        self.subscription2 = self.create_subscription(Bool,'/barista_'+str(robot_id)+'/goal_status',self.goal_callback,10)
+        self.subscription = self.create_subscription(PoseWithCovarianceStamped,'/agent_'+str(robot_id)+'/amcl_pose',self.callback,10)    
+        self.subscription2 = self.create_subscription(Bool,'/agent_'+str(robot_id)+'/goal_status',self.goal_callback,10)
         self.robot_id = robot_id
         self.i = 0
         
         self.iteration = int(arg)
-        self.get_logger().info("Barista_"+str(robot_id)+" POSE SUBSCRIBER IS READY")
+        self.get_logger().info("agent_"+str(robot_id)+" POSE SUBSCRIBER IS READY")
 
 # fetching Coordinates    
     def callback(self, pose:PoseWithCovarianceStamped):
@@ -80,7 +80,7 @@ class PoseSubscriber(Node):
         self._y=pose.pose.pose.position.y
         self.rot_q = pose.pose.pose.orientation
         (roll, pitch, self._theta) = euler_from_quaternion([self.rot_q.x, self.rot_q.y, self.rot_q.z, self.rot_q.w])  
-        #self.get_logger().info("(X = " + str(self._x) + ",  Y= " + str(self._y) + ", Theta = " + str(self._theta) + ") barista_"+str(self.robot_id))
+        #self.get_logger().info("(X = " + str(self._x) + ",  Y= " + str(self._y) + ", Theta = " + str(self._theta) + ") agent_"+str(self.robot_id))
         i=self.robot_id
         bot_coord[i][0].append(self._x);bot_coord[i][1].append(self._y);bot_coord[i][2].append(self._theta);bot_coord[i][3].append(self.time)
         self.csv_data()
@@ -90,9 +90,9 @@ class PoseSubscriber(Node):
     def goal_callback(self,goal:Bool):
         self.get_logger().info('=================================================')
         if (goal.data==True):
-            self.get_logger().info("barista_"+str(self.robot_id)+": reached goal.")
-            self.get_logger().info("barista_"+str(self.robot_id)+": Pose Coordinates: (x = " + str(self._x) + ", y = " + str(self._y) + ", Theta = " + str(self._theta)+")")
-            pose_data["barista_"+str(self.robot_id)+"_pose"].append({"x":self._x, "y":self._y, "theta":self._theta})
+            self.get_logger().info("agent_"+str(self.robot_id)+": reached goal.")
+            self.get_logger().info("agent_"+str(self.robot_id)+": Pose Coordinates: (x = " + str(self._x) + ", y = " + str(self._y) + ", Theta = " + str(self._theta)+")")
+            pose_data["agent_"+str(self.robot_id)+"_pose"].append({"x":self._x, "y":self._y, "theta":self._theta})
             self.json_data()
             self.iteration_counter()
             
@@ -100,7 +100,7 @@ class PoseSubscriber(Node):
 #Counting no. of iterations and shutting down node after reaching max iterations
     def iteration_counter(self):
         self.i += 1
-        self.get_logger().info( "barista_" + str(self.robot_id)+ ": Iteration No.(" + str(self.i) + ") Completed.")
+        self.get_logger().info( "agent_" + str(self.robot_id)+ ": Iteration No.(" + str(self.i) + ") Completed.")
         global counter
         counter+=1
         if self.i==self.iteration:

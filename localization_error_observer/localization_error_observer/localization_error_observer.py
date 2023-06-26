@@ -44,6 +44,7 @@ class LocalizationError(Node):
         self.delta_dictionary["y"] = []
         self.delta_dictionary["theta"] = []
         self.data = []
+        self.data_theta = []
         self.robot_number = str(robot_id)
         # generate x_axis
         self.index = np.arange(1, int(self.iterations)+1, dtype=int)
@@ -55,19 +56,19 @@ class LocalizationError(Node):
 
         self.subscription = self.create_subscription(
             PoseWithCovarianceStamped,
-            'barista_'+str(robot_id)+'/amcl_pose',
+            'agent_'+str(robot_id)+'/amcl_pose',
             self.robot_agent_amcl_callback,
             10)
         self.subscription
         self.subscription2 = self.create_subscription(
             PoseStamped,
-            'barista_'+str(robot_id)+'/send_pose',
+            'agent_'+str(robot_id)+'/send_pose',
             self.robot_agent_goal_callback,
             10)
         self.subscription2
         self.subscription3 = self.create_subscription(
             Bool,
-            '/barista_'+str(robot_id)+'/goal_status',
+            '/agent_'+str(robot_id)+'/goal_status',
             self.status_check,
             10)
         self.subscription3
@@ -177,100 +178,25 @@ class LocalizationError(Node):
         self.i += 1
         print(self.robot_agent_delta_dictionary)
 
-            # comment from this block if only csv is required
-'''
-            def add_line(ax, xpos, ypos):
-                line = plt.Line2D([xpos, xpos], [ypos + .1, ypos],
-                                  transform=ax.transAxes, color='gray')
-                line.set_clip_on(False)
-                ax.add_line(line)
-
-            def label_len(my_index, level):
-                labels = my_index.get_level_values(level)
-                return [(k, sum(1 for i in g)) for k, g in groupby(labels)]
-
-            def label_group_bar_table(ax, df):
-                ypos = -.1
-                scale = 1./df.index.size
-                # print(range(df.index.nlevels)[::-1])
-                for level in range(df.index.nlevels)[::-1]:
-                    pos = 0
-                    for label, rpos in label_len(df.index, level):
-                        lxpos = (pos + .5 * rpos)*scale
-                        print(label)
-                        ax.text(lxpos, ypos, label, ha='center',
-                                transform=ax.transAxes)
-                        add_line(ax, pos*scale, ypos)
-                        pos += rpos
-                    add_line(ax, pos*scale, ypos)
-                    ypos -= .1
-
-            # print(df)
-            # ax = df.plot(marker='o', linestyle='none',)#, xlim=(-.5,11.5))
-            color_list = []
-            my_colors = islice(cycle(['b', 'r', 'g']), None, 45)
-            for item in my_colors:
-                color_list.append(item)
-
-            fig, ax = plt.subplots(1)
-
-            # x-axis
-            x_list = np.arange(1, 46).tolist()
-            # create axis
-            ax.scatter(x_list, df.values, c=color_list)
-            # Below 2 lines remove default labels
-            plt.yticks(np.arange(df.values.min(), df.values.max(), 0.5))
-            plt.xlim(0.5, 45.5)
-            ax.set_xticklabels('')
-            ax.set_xlabel('')
-
-            # add x-axis values
-            label_group_bar_table(ax, df)
-
-            # add legend
-            legend_elements = [Line2D([0], [0], marker='o', color='b', label='x',
-                                      markerfacecolor='b', markersize=8),
-                               Line2D([0], [0], marker='o', color='r', label='y',
-                                      markerfacecolor='r', markersize=8),
-                               Line2D([0], [0], marker='o', color='g', label='\u03F4',
-                                      markerfacecolor='g', markersize=8)]
-
-            ax.legend(handles=legend_elements, loc='upper left')
-
-            # add grids
-            ax.minorticks_on()
-            ax.grid(which='major', linestyle='-', linewidth='0.5')
-            ax.grid(which='minor', linestyle='-', linewidth='0.5')
-
-            # add labels
-            ax.set_xlabel('Iterations')
-            ax.set_ylabel('Error in cm')
-            ax.xaxis.set_label_coords(.5, -.3)
-            plt.tight_layout()
-            plt.show()
-'''
 
 
 
 
 def main(args=None):
     rclpy.init(args=args)
+    number_of_robots = int(sys.argv[2])
     try:
-        error_subscriber_0 = LocalizationError(sys.argv[1], robot_id=0)
-        error_subscriber_1 = LocalizationError(sys.argv[1], robot_id=1)
-        error_subscriber_2 = LocalizationError(sys.argv[1], robot_id=2)
-        error_subscriber_3 = LocalizationError(sys.argv[1], robot_id=3)
-        executor = SingleThreadedExecutor()
+        for i in range(0, number_of_robots):
+                print(i)
+                error_subscriber = LocalizationError(sys.argv[1], robot_id=i)              
+                executor = SingleThreadedExecutor()
+                executor.add_node(error_subscriber)
 
-        executor.add_node(error_subscriber_0)
-        executor.add_node(error_subscriber_1)
-        executor.add_node(error_subscriber_2)
-        executor.add_node(error_subscriber_3)
         try:
             executor.spin()
         finally:
             executor.destroy_node()
-    
+
     except KeyboardInterrupt:
         rclpy.shutdown()
 

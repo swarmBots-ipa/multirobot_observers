@@ -15,7 +15,7 @@ goal_data ={}
 
 #creating empty arrays for storing data based on no of robots
 for i in range(no_of_bots):
-    goal_data["barista_"+str(i)+"_goal"] = list()
+    goal_data["agent_"+str(i)+"_goal"] = list()
 
 #creating paths
 filename = os.path.basename(__file__)
@@ -32,9 +32,9 @@ class GoalSubscriber(Node):
    #Subscribing topics
     def __init__(self,robot_id):
         super().__init__("Goal_subscriber_" + str(robot_id))
-        self.subscription = self.create_subscription(PoseStamped,'/barista_'+str(robot_id)+'/send_pose',self.callback,10)
+        self.subscription = self.create_subscription(PoseStamped,'/agent_'+str(robot_id)+'/send_pose',self.callback,10)
         self.robot_id = robot_id
-        self.get_logger().info("Barista_"+str(robot_id)+" GOAL SUBSCRIBER IS READY")
+        self.get_logger().info("agent_"+str(robot_id)+" GOAL SUBSCRIBER IS READY")
 
 
 # fetching Coordinates 
@@ -44,8 +44,8 @@ class GoalSubscriber(Node):
         rot_q = pose.pose.orientation
         (roll, pitch, theta) = euler_from_quaternion([rot_q.x, rot_q.y, rot_q.z, rot_q.w])  
         self.get_logger().info('=================================================')
-        self.get_logger().info("barista_"+str(self.robot_id)+": Goal Coordinates: (x = " + str(x) + ", y = " + str(y) + ", Theta = " + str(theta)+")")
-        goal_data["barista_"+str(self.robot_id)+"_goal"].append({"x":x, "y":y, "theta":theta})
+        self.get_logger().info("agent_"+str(self.robot_id)+": Goal Coordinates: (x = " + str(x) + ", y = " + str(y) + ", Theta = " + str(theta)+")")
+        goal_data["agent_"+str(self.robot_id)+"_goal"].append({"x":x, "y":y, "theta":theta})
         GoalSubscriber.final_data()
 # Creating Json files
     def final_data():
